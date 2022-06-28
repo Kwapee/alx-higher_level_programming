@@ -1,69 +1,50 @@
 #!/usr/bin/python3
 
-import sys
+"""
+    print coordinates of queens that arent attacking each other
+    Args:
+        n: passed in number, > 4, that will be the size of the chessboard
+        board: row and column grid
+        row: x axis
+        col: y axis
+"""
 
 
-def print_NQueen(square_y, N):
-    """Create a the format and print the result
-    result = possible variant of the queen position
-    in the chess game"""
-    result = []
-    i = 0
-    for a in square_y:
-        new = []
-        new.append(i)
-        new.append(a)
-        result.append(new)
-        i = i + 1
-    print(result)
-
-
-def check_move(pos_x, square_y):
-    """Check if the square it is available to move or not
-        we check the position between one queen and the
-        posible position of the new queen"""
-    for i in range(pos_x):
-        if square_y[i] == square_y[pos_x]:
-            return False
-        if pos_x - i == abs(square_y[pos_x] - square_y[i]):
+def isSafe(board, row, col):
+    """check if queens placed are attacking"""
+    for c in range(col):
+        if board[c] is row or abs(board[c] - row) is abs(c - col):
             return False
     return True
 
 
-def solve_NQueen(N, pos_x, square_y):
-    """Backtracking function:
-    - N: Size of chessboard
-    - pos_x: actual position
-    - square_x: list of solutions to move the queen"""
-    if (pos_x == N):
-        print_NQueen(square_y, N)
-    else:
-        for i in range(N):
-            square_y.append(i)
-            if (check_move(pos_x, square_y)):
-                solve_NQueen(N, pos_x + 1, square_y)
-            square_y.pop(-1)
+def checkBoard(board, col):
+    """recursively place queens on board until end of board"""
+    n = len(board)
+    if col is n:
+        print(str([[c, board[c]] for c in range(n)]))
+        return
+    for row in range(n):
+        if isSafe(board, row, col):
+            board[col] = row
+            checkBoard(board, col + 1)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    """read from stdin"""
     import sys
-
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
-
-    N = sys.argv[1]
-
+    n = 0
+    """display errors"""
     try:
-        N = int(N)
+        n = int(sys.argv[1])
     except:
         print("N must be a number")
-        exit(1)
-
-    if (N < 4):
+        sys.exit(1)
+    if n < 4:
         print("N must be at least 4")
         sys.exit(1)
-
-    # initialize chess game
-    square_y = []
-    pos_x = 0
-    solve_NQueen(N, pos_x, square_y)
+    """set up board"""
+    board = [0 for x in range(n)]
+    checkBoard(board, 0)
