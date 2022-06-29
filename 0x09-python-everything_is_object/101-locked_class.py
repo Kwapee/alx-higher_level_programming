@@ -1,7 +1,7 @@
 #!/usr/bin/python3
+"""class LockedClass"""
+
+
 class LockedClass:
-
-    __slots__ = ['first_name']
-
-    def __init__(self, first_name=''):
-        self.first_name = first_name
+    """Class of LockedClass, statically allocated"""
+    __slots__ = "first_name"
