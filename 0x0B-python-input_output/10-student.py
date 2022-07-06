@@ -1,35 +1,26 @@
 #!/usr/bin/python3
-"""Module 12-student.
-Creates a Student class.
+"""
+10-student.py
+If attrs is a list of strings, only attribute
+names contained in this list must be retrieved.
 """
 
 
 class Student:
-    """Class that defines a student.
-    Public attributes:
-        - first_name
-        - last_name
-        - age
-    Public method to_json().
     """
-
+    class student and def, nomb, apellido, age
+    """
     def __init__(self, first_name, last_name, age):
-        """Initializes the Student instance."""
-
+        """inicialization"""
         self.first_name = first_name
         self.last_name = last_name
         self.age = age
 
     def to_json(self, attrs=None):
-        """Retrieves a dictionary representation
-        of a Student instance.
-
-        Args:
-            - attrs: list of attributes
-
-        Returns: the dict representation of the instance.
+        """dictionary representation
+        attrs: list of attributes
+        return: dict representation of instance
         """
-
         my_dict = dict()
         if type(attrs) is list and all(type(x) is str for x in attrs):
             for x in attrs:
