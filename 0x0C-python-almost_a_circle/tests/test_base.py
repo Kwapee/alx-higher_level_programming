@@ -1,106 +1,174 @@
 #!/usr/bin/python3
-
-"""Defines unittests for base.py.
-
-
-Unittest classes:
-    TestBase_instantiation - line 22
-    TestBase_to_json_string - line 110
-    TestBase_save_to_file - line 156
-    TestBase_from_json_string - line 234
-    TestBase_create - line 288
-    TestBase_load_from_file - line 340
-    TestBase_save_to_file_csv - line 406
-    TestBase_load_from_file_csv - line 484
 """
-import os
+Test differents behaviors of the Base class
+"""
 import unittest
+import pep8
+import os
 from models.base import Base
 from models.rectangle import Rectangle
+from models.square import Square
 
 
-class TestBase_instantiation(unittest.TestCase):
-    """Unittests for testing instantiation of the Base class."""
+class TestBase(unittest.TestCase):
+    """
+    A class to test Base Class
+    """
+    def test_pep8_base(self):
+        """
+        Test that checks PEP8
+        """
+        syntax = pep8.StyleGuide(quit=True)
+        check = syntax.check_files(['models/base.py'])
+        self.assertEqual(
+            check.total_errors, 0,
+            "Found code style errors (and warnings)."
+        )
 
-    def test_no_arg(self):
-        b1 = Base()
-        b2 = Base()
-        self.assertEqual(b1.id, b2.id - 1)
+    def test_id_as_positive(self):
+        """
+        Test for positive Base Class id
+        """
+        base_instance = Base(110)
+        self.assertEqual(base_instance.id, 110)
+        base_instance = Base(30)
+        self.assertEqual(base_instance.id, 30)
 
-    def test_three_bases(self):
-        b1 = Base()
-        b2 = Base()
-        b3 = Base()
-        self.assertEqual(b1.id, b3.id - 2)
+    def test_id_as_negative(self):
+        """
+        Test for negative Base Class id
+        """
+        base_instance = Base(-20)
+        self.assertEqual(base_instance.id, -20)
+        base_instance = Base(-10)
+        self.assertEqual(base_instance.id, -10)
 
-    def test_None_id(self):
-        b1 = Base(None)
-        b2 = Base(None)
-        self.assertEqual(b1.id, b2.id - 1)
+    def test_id_as_none(self):
+        """
+        Test for None Base Class id
+        """
+        base_instance = Base()
+        self.assertEqual(base_instance.id, 1)
+        base_instance = Base(None)
+        self.assertEqual(base_instance.id, 2)
 
-    def test_unique_id(self):
-        self.assertEqual(12, Base(12).id)
+    def test_string_id(self):
+        base_instance = Base("Ping Pong")
+        self.assertEqual(base_instance.id, "Ping Pong")
+        base_instance = Base("Hola soy Goku")
+        self.assertEqual(base_instance.id, "Hola soy Goku")
 
-    def test_nb_instances_after_unique_id(self):
-        b1 = Base()
-        b2 = Base(12)
-        b3 = Base()
-        self.assertEqual(b1.id, b3.id - 1)
+    def test_to_json_string(self):
+        """
+        Test to_json_string method
+        """
+        rect_instance = Rectangle(10, 17, 2, 8, 70)
+        rect_data = re1.to_dictionary()
+        json_data = Base.to_json_string([rect_data])
+        self.assertEqual(type(json_data), str)
 
-    def test_id_public(self):
-        b = Base(12)
-        b.id = 15
-        self.assertEqual(15, b.id)
+    def test_empty_to_json_string(self):
+        """
+        Test for a empty data on to_json_string method
+        """
+        empty_data = []
+        json_data = Base.to_json_string(empty_data)
+        self.assertEqual(json_data, "[]")
 
-    def test_nb_instances_private(self):
-        with self.assertRaises(AttributeError):
-            print(Base(12).__nb_instances)
+        empty_data = None
+        json_data = Base.to_json_string(empty_data)
+        self.assertEqual(json_data, "[]")
 
-    def test_str_id(self):
-        self.assertEqual("hello", Base("hello").id)
+    def test_instance(self):
+        """
+        Test Base Class instance
+        """
+        base_instance = Base()
+        self.assertEqual(type(base_instance), Base)
+        self.assertTrue(isinstance(base_instance, Base))
 
-    def test_float_id(self):
-        self.assertEqual(5.5, Base(5.5).id)
+    def test_to_json_string(self):
+        """
+        Test a normal to_json_string functionality
+        """
+        rect_data = {'id': 31, 'x': 14, 'y': 10, 'width': 5, 'height': 5}
+        json_data = Base.to_json_string([rect_data])
 
-    def test_complex_id(self):
-        self.assertEqual(complex(5), Base(complex(5)).id)
+        self.assertTrue(isinstance(rect_data, dict))
+        self.assertTrue(isinstance(json_data, str))
+        self.assertCountEqual(
+            json_data,
+            '{["id": 31, "x": 14, "y": 10, "width": 5, "height": 5]}'
+        )
 
-    def test_dict_id(self):
-        self.assertEqual({"a": 1, "b": 2}, Base({"a": 1, "b": 2}).id)
+    def test_wrong_to_json_string(self):
+        """
+        Test a wrong functionality of to_json_string method
+        """
+        json_data = Base.to_json_string(None)
+        self.assertEqual(json_data, "[]")
 
-    def test_bool_id(self):
-        self.assertEqual(True, Base(True).id)
+        warn = ("to_json_string() missing 1 required positional argument: " +
+                "'list_dictionaries'")
 
-    def test_list_id(self):
-        self.assertEqual([1, 2, 3], Base([1, 2, 3]).id)
+        with self.assertRaises(TypeError) as msg:
+            Base.to_json_string()
 
-    def test_tuple_id(self):
-        self.assertEqual((1, 2), Base((1, 2)).id)
+        self.assertEqual(warn, str(msg.exception))
 
-    def test_set_id(self):
-        self.assertEqual({1, 2, 3}, Base({1, 2, 3}).id)
+        warn = "to_json_string() takes 1 positional argument but 2 were given"
 
-    def test_frozenset_id(self):
-        self.assertEqual(frozenset({1, 2, 3}), Base(frozenset({1, 2, 3})).id)
+        with self.assertRaises(TypeError) as msg:
+            Base.to_json_string([{43, 87}], [{22, 17}])
 
-    def test_range_id(self):
-        self.assertEqual(range(5), Base(range(5)).id)
+        self.assertEqual(warn, str(msg.exception))
 
-    def test_bytes_id(self):
-        self.assertEqual(b'Python', Base(b'Python').id)
+    def test_wrong_save_to_file(self):
+        """
+        Test save_to_file method
+        """
+        with self.assertRaises(AttributeError) as msg:
+            Base.save_to_file([Base(1), Base(2)])
 
-    def test_bytearray_id(self):
-        self.assertEqual(bytearray(b'abcefg'), Base(bytearray(b'abcefg')).id)
+        self.assertEqual(
+             "'Base' object has no attribute 'to_dictionary'",
+             str(msg.exception)
+        )
 
-    def test_memoryview_id(self):
-        self.assertEqual(memoryview(b'abcefg'), Base(memoryview(b'abcefg')).id)
+    def test_load_from_file(self):
+        """
+        Test load_from_file method
+        """
+        if os.path.exists("Base.json"):
+            os.remove("Base.json")
 
-    def test_inf_id(self):
-        self.assertEqual(float('inf'), Base(float('inf')).id)
+        if os.path.exists("Rectangle.json"):
+            os.remove("Rectangle.json")
 
-    def test_NaN_id(self):
-        self.assertNotEqual(float('nan'), Base(float('nan')).id)
+        if os.path.exists("Square.json"):
+            os.remove("Square.json")
 
-    def test_two_args(self):
-        with self.assertRaises(TypeError):
-            Base(1, 2)
+        rect_output = Rectangle.load_from_file()
+        self.assertEqual(rect_output, [])
+
+        square_output = Square.load_from_file()
+        self.assertEqual(square_output, [])
+
+        warn = "load_from_file() takes 1 positional argument but 2 were given"
+
+        with self.assertRaises(TypeError) as msg:
+            Rectangle.load_from_file('Monty Python')
+
+        self.assertEqual(warn, str(msg.exception))
+
+    def test_create(self):
+        """
+        Test create method
+        """
+        with self.assertRaises(TypeError) as msg:
+            warn = Rectangle.create('Monty Python')
+
+        self.assertEqual(
+            "create() takes 1 positional argument but 2 were given",
+            str(msg.exception)
+        )
