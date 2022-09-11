@@ -1,0 +1,28 @@
+" ============================================================================
+" Netrw Directory Listing                                        (netrw v165)
+"   /alx-higher_level_programming/0x00-python-hello_world
+"   Sorted by      name
+"   Sort sequence: [\/]$,\<core\%(\.\d\+\)\=\>,\.h$,\.c$,\.cpp$,\~\=\*$,*,\.o$,\.obj$,\.info$,\.swp$,\.bak$,\~$
+"   Quick Help: <F1>:help  -:go up dir  D:delete  R:rename  s:sort-by  x:special
+" ==============================================================================
+../
+./
+lists.h
+10-check_cycle.c
+0-run*
+1-run_inline*
+100-write.py*
+101-compile*
+102-magic_calculation.py*
+2-print.py*
+3-print_number.py*
+4-print_float.py*
+5-print_string.py*
+6-concat.py*
+7-edges.py*
+8-concat_edges.py*
+9-easter_egg.py*
+README.md
+main.py
+pycode.py
+.4-print_float.py.swp
